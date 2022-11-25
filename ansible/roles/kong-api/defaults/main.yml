@@ -7069,3 +7069,40 @@ kong_apis:
       config.limit_by: credential
     - name: request-size-limiting
       config.allowed_payload_size: "{{ small_request_size_limit }}"
+
+  - name: userPassbookPostOrPatch
+    uris: "{{ user_service_prefix }}/v1/passbook"
+    upstream_url: "{{ sb_cb_ext_service_url }}/user/v1/passbook"
+    strip_uri: true
+    plugins:
+    - name: jwt
+    - name: cors
+    - "{{ statsd_pulgin }}"
+    - name: acl
+      config.whitelist:
+        - 'userAccess'
+    - name: rate-limiting
+      config.policy: local
+      config.hour: "{{ large_rate_limit_per_hour }}"
+      config.limit_by: credential
+    - name: request-size-limiting
+      config.allowed_payload_size: "{{ small_request_size_limit }}"
+
+  - name: userPassbookAdminPost
+    uris: "{{ user_service_prefix }}/v1/admin/passbook"
+    upstream_url: "{{ sb_cb_ext_service_url }}/admin/user/v1/passbook"
+    strip_uri: true
+    plugins:
+    - name: jwt
+    - name: cors
+    - "{{ statsd_pulgin }}"
+    - name: acl
+      config.whitelist:
+        - 'userAccess'
+    - name: rate-limiting
+      config.policy: local
+      config.hour: "{{ large_rate_limit_per_hour }}"
+      config.limit_by: credential
+    - name: request-size-limiting
+      config.allowed_payload_size: "{{ small_request_size_limit }}"
+
